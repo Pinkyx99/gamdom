@@ -1,0 +1,68 @@
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Gamdom</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Poppins:wght@600;700;800&display=swap" rel="stylesheet">
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              'background': '#081018',
+              'card-bg': '#0D1316',
+              'accent-green': '#00C17B',
+              'secondary-green': '#0FA56B',
+              'accent-magenta': '#E03DAE',
+              'accent-orange': '#FFAA5B',
+              'text-muted': '#9CA3AF',
+              'heading-bright': '#FFFFFF',
+            },
+            fontFamily: {
+              'sans': ['Inter', 'sans-serif'],
+              'display': ['Poppins', 'sans-serif'],
+            },
+            boxShadow: {
+              'soft': '0 6px 20px rgba(2,6,10,0.6)',
+              'glow-magenta': '0 0 40px rgba(224, 61, 174, 0.3)',
+              'glow-green': '0 0 40px rgba(0, 193, 123, 0.3)',
+            },
+            borderColor: {
+              'outline': 'rgba(255,255,255,0.03)',
+            }
+          }
+        }
+      }
+    </script>
+    <style>
+      /* For custom scrollbar in webkit browsers */
+      .no-scrollbar::-webkit-scrollbar {
+        display: none;
+      }
+      .no-scrollbar {
+        -ms-overflow-style: none; /* IE and Edge */
+        scrollbar-width: none; /* Firefox */
+      }
+    </style>
+  <script type="importmap">
+{
+  "imports": {
+    "react-dom/": "https://aistudiocdn.com/react-dom@^19.1.1/",
+    "react/": "https://aistudiocdn.com/react@^19.1.1/",
+    "react": "https://aistudiocdn.com/react@^19.1.1",
+    "@supabase/supabase-js": "https://esm.sh/@supabase/supabase-js@2"
+  }
+}
+</script>
+<link rel="stylesheet" href="/index.css">
+</head>
+  <body class="bg-background">
+    <div id="root"></div>
+  <script type="module" src="/index.tsx"></script>
+</body>
+</html>
