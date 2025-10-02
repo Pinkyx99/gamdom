@@ -9,7 +9,7 @@ interface MinesControlsProps {
     setBetAmount: (amount: number) => void;
     numMines: number;
     setNumMines: (mines: number) => void;
-    gameState: 'idle' | 'playing' | 'busted';
+    gameState: 'idle' | 'playing' | 'busted' | 'cashed_out';
     onStartGame: () => void;
     onCashout: () => void;
     profit: number;
@@ -47,12 +47,21 @@ export const MinesControls: React.FC<MinesControlsProps> = ({
     const isIdle = gameState === 'idle';
     const isPlaying = gameState === 'playing';
     const isBusted = gameState === 'busted';
+    const isCashedOut = gameState === 'cashed_out';
 
     const renderActionButton = () => {
         if (isBusted) {
             return (
                 <button onClick={onReset} className="w-full py-4 text-center rounded-lg text-lg font-bold bg-[#f44336] text-white transition-transform hover:scale-105 shadow-lg shadow-red-500/30">
                     Busted! Try Again
+                </button>
+            );
+        }
+        if (isCashedOut) {
+            return (
+                <button onClick={onReset} className="w-full py-3 text-center rounded-lg text-lg font-bold bg-accent-green text-white transition-transform hover:scale-105 shadow-lg shadow-green-500/30">
+                    <div className="leading-tight">Won ${profit.toFixed(2)}</div>
+                    <div className="text-sm font-semibold opacity-90">Play Again</div>
                 </button>
             );
         }

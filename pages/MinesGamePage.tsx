@@ -87,7 +87,7 @@ interface MinesGamePageProps {
 
 
 const MinesGamePage: React.FC<MinesGamePageProps> = ({ profile, session, onProfileUpdate, onBalanceChange }) => {
-    const [gameState, setGameState] = useState<'idle' | 'playing' | 'busted'>('idle');
+    const [gameState, setGameState] = useState<'idle' | 'playing' | 'busted' | 'cashed_out'>('idle');
     const [betAmount, setBetAmount] = useState(0.01);
     const [numMines, setNumMines] = useState(3);
     const [gridState, setGridState] = useState<( 'hidden' | 'gem' | 'mine' )[]>(Array(25).fill('hidden'));
@@ -184,11 +184,10 @@ const MinesGamePage: React.FC<MinesGamePageProps> = ({ profile, session, onProfi
         if (gameState !== 'playing' || gemsFound === 0) return;
 
         onBalanceChange(profit);
-        onProfileUpdate();
         
-        setGameState('busted'); // Use 'busted' to signify end of round
+        setGameState('cashed_out');
         showFinalGrid();
-    }, [gameState, gemsFound, profit, showFinalGrid, onBalanceChange, onProfileUpdate]);
+    }, [gameState, gemsFound, profit, showFinalGrid, onBalanceChange]);
     
     return (
         <div className="flex-1 flex flex-col bg-cover bg-center" style={{ backgroundImage: "url('https://gamdom.com/_proxied/games/mines/background-large.c5ce2650525728772697.webp')" }}>

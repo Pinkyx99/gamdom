@@ -1,18 +1,19 @@
 
+
 import React from 'react';
 
 interface MinesGridProps {
     gridState: ('hidden' | 'gem' | 'mine')[];
     onTileClick: (index: number) => void;
-    gameState: 'idle' | 'playing' | 'busted';
+    gameState: 'idle' | 'playing' | 'busted' | 'cashed_out';
 }
 
 const Tile: React.FC<{
     state: 'hidden' | 'gem' | 'mine';
     onClick: () => void;
     disabled: boolean;
-    isBusted: boolean;
-}> = ({ state, onClick, disabled, isBusted }) => {
+    isFinished: boolean;
+}> = ({ state, onClick, disabled, isFinished }) => {
     
     // Increased rounding for a "smoother" feel
     const baseStyle = "aspect-square rounded-xl flex items-center justify-center transition-all duration-300 ease-in-out transform focus:outline-none focus:ring-2 focus:ring-green-400 focus:ring-opacity-50";
@@ -36,7 +37,7 @@ const Tile: React.FC<{
         default:
             content = <img src="https://i.imgur.com/A6bw8ao.png" alt="Hidden tile" className="w-full h-full object-cover rounded-xl" />;
             // Added white glow on hover
-            styles = `p-0 ${disabled ? 'cursor-not-allowed' : 'hover:-translate-y-1 hover:shadow-[0_0_15px_rgba(255,255,255,0.3)]'} ${isBusted ? 'opacity-40' : ''}`;
+            styles = `p-0 ${disabled ? 'cursor-not-allowed' : 'hover:-translate-y-1 hover:shadow-[0_0_15px_rgba(255,255,255,0.3)]'} ${isFinished ? 'opacity-40' : ''}`;
             break;
     }
 
@@ -53,7 +54,7 @@ const Tile: React.FC<{
 }
 
 export const MinesGrid: React.FC<MinesGridProps> = ({ gridState, onTileClick, gameState }) => {
-    const isBusted = gameState === 'busted';
+    const isFinished = gameState === 'busted' || gameState === 'cashed_out';
     return (
         // Increased container size and gap to make tiles bigger
         <div className="w-full max-w-lg lg:w-[520px] flex-shrink-0">
@@ -64,7 +65,7 @@ export const MinesGrid: React.FC<MinesGridProps> = ({ gridState, onTileClick, ga
                         state={state} 
                         onClick={() => onTileClick(index)}
                         disabled={gameState !== 'playing' || state !== 'hidden'}
-                        isBusted={isBusted}
+                        isFinished={isFinished}
                     />
                 ))}
             </div>
