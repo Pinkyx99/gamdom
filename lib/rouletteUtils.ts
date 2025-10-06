@@ -67,6 +67,9 @@ async function hmacSha256(secret: string, message: string): Promise<string> {
 
 /**
  * Generates the winning roulette number based on seeds and nonce.
+ * This function is the core of the provably fair system.
+ * It takes the server seed, client seed, and a nonce, combines them,
+ * and uses a standard HMAC-SHA256 hash to produce a deterministic outcome.
  * @param serverSeed The server's secret seed for the round.
  * @param clientSeed The user-provided client seed.
  * @param nonce The round number for the current seed pair.

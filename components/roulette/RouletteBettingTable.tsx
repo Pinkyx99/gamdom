@@ -1,4 +1,3 @@
-
 import React, { useMemo } from 'react';
 import { Profile, RouletteBet, RouletteColor } from '../../types';
 
@@ -30,7 +29,7 @@ export const RouletteBettingArea: React.FC<RouletteBettingAreaProps> = ({ color,
     };
 
     return (
-        <div className={`bg-[#1A222D] rounded-xl border-2 ${isEnded && isWinner ? 'border-accent-green animate-pulse-slow' : 'border-outline'} flex flex-col min-h-[220px] p-3 space-y-3 transition-colors`}>
+        <div className={`bg-[#1A222D] rounded-xl border-2 ${isEnded && isWinner ? 'border-accent-green animate-pulse-slow' : 'border-outline'} flex flex-col min-h-[250px] p-3 space-y-3 transition-colors`}>
             <div className="text-center">
                 <p className="text-sm font-semibold text-white">Potential Profit: {payout}</p>
                 <button
@@ -57,7 +56,7 @@ export const RouletteBettingArea: React.FC<RouletteBettingAreaProps> = ({ color,
                             <span className="text-xs text-text-muted truncate max-w-[120px]">{bet.user_id === profile?.id ? 'Your Bet' : bet.profiles.username}</span>
                         </div>
                         <div className="flex items-center space-x-3">
-                            {isEnded && isWinner && bet.user_id === profile?.id && bet.profit && bet.profit > 0 && (
+                            {isEnded && isWinner && bet.user_id === profile?.id && bet.profit !== null && bet.profit > 0 && (
                                 <span className="text-sm font-semibold text-accent-green animate-pulse">
                                     +${bet.profit.toFixed(2)}
                                 </span>

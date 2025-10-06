@@ -1,4 +1,4 @@
-import { NavItem, HeroSlide, Category, OriginalGame, Game, DropdownLink, Currency, BetCurrency, PaymentCategory, ProfileLink, CrashHistoryItem } from './types';
+import { NavItem, HeroSlide, Category, OriginalGame, Game, DropdownLink, Currency, BetCurrency, PaymentCategory, ProfileLink, CrashHistoryItem, RewardCard, RoyaltyRank, RoyaltyTier } from './types';
 import { 
     DiceIcon, HiloIcon, MinesIcon, CrashIcon, PlinkoIcon, RouletteIcon, KenoIcon,
     UsdIcon, BtcIcon, EthIcon, LtcIcon, TrxIcon, XrpIcon, DogeIcon, SolIcon,
@@ -191,3 +191,36 @@ export const CRASH_HISTORY: CrashHistoryItem[] = [
     { multiplier: 1.28 }, { multiplier: 1.62 }, { multiplier: 1.02 }, { multiplier: 1.79 }, { multiplier: 2.30 },
     { multiplier: 1.00 }, { multiplier: 1.75 }, { multiplier: 4.50 }, { multiplier: 1.15 }, { multiplier: 2.80 },
 ];
+
+// Data for Rewards Page
+export const REWARDS_HERO_SLIDES: HeroSlide[] = [
+    { ...HERO_SLIDES[0] },
+    { ...HERO_SLIDES[1] },
+    { ...HERO_SLIDES[2] },
+];
+
+export const CLAIMABLE_REWARDS: RewardCard[] = [
+    { title: 'Instant', reward: '$0.08', claimable: true, imageUrl: 'https://gamdom.com/build/instant.0c7f5c268a.304.png' },
+    { title: 'Weekly', timeLeft: '6 Days Left', claimable: false, imageUrl: 'https://gamdom.com/build/weekly.68aa609174.304.png' },
+    { title: 'Monthly', timeLeft: '25 Days Left', claimable: false, imageUrl: 'https://gamdom.com/build/monthly.79f7d25848.304.png' },
+];
+
+const TIERS: RoyaltyTier[] = ['Bronze', 'Silver', 'Gold', 'Emerald', 'Sapphire', 'Ruby', 'Diamond', 'Opal'];
+
+export const ROYALTY_RANKS: RoyaltyRank[] = TIERS.flatMap((tier, tierIndex) => 
+    [1, 2, 3].map((level, levelIndex) => {
+        const rank: RoyaltyRank = {
+            name: `${tier} ${level}`,
+            tier,
+            level,
+            status: 'locked' // Default to locked
+        };
+        // Mock data logic: Set some ranks to claimed and one to unlocked
+        if (tierIndex < 2) { // Bronze and Silver
+            rank.status = 'claimed';
+        } else if (tierIndex === 2 && levelIndex === 0) { // Gold 1
+            rank.status = 'unlocked';
+        }
+        return rank;
+    })
+);

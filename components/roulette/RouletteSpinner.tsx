@@ -1,5 +1,3 @@
-
-
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { RouletteGameState } from '../../types';
 import { MutedSoundIcon, InfoCircleIcon, CheckCircleIcon } from '../icons';
@@ -67,7 +65,7 @@ const GameStatusDisplay: React.FC<{ gameState: RouletteGameState | null; countdo
 const TopArrowMarker: React.FC = () => (
     <div className="absolute top-[-4px] left-1/2 -translate-x-1/2 z-20 flex flex-col items-center pointer-events-none">
         <svg width="28" height="16" viewBox="0 0 28 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg" className="text-gray-600 drop-shadow-lg">
-            <path d="M14 16L0 0H28L14 16Z" transform="rotate(180 14 8)"/>
+            <path d="M14 0L28 16H0L14 0Z" />
         </svg>
     </div>
 );
@@ -79,7 +77,8 @@ export const RouletteSpinner: React.FC<RouletteSpinnerProps> = ({ gameState, win
     const [isAnimating, setIsAnimating] = useState(false);
     
     const viewportRef = useRef<HTMLDivElement>(null);
-    const snapTimerRef = useRef<number>();
+    // FIX: Initialize useRef with null and update type to handle timer IDs correctly, resolving a potential type error.
+    const snapTimerRef = useRef<number | null>(null);
     const [viewportWidth, setViewportWidth] = useState(0);
 
     useEffect(() => {
@@ -94,56 +93,59 @@ export const RouletteSpinner: React.FC<RouletteSpinnerProps> = ({ gameState, win
         setReel(Array.from({ length: ROULETTE_ORDER.length * REEL_CYCLES }, (_, i) => ROULETTE_ORDER[i % ROULETTE_ORDER.length]));
     }, []);
     
-    const getTranslateForIndex = useCallback((index: number): number => {
+    const getTranslateForIndex = useCallback((index: number, wobble = 0): number => {
         if (viewportWidth === 0) return 0;
         const centerOffset = viewportWidth / 2 - TILE_WIDTH / 2;
         const targetPosition = index * TILE_STEP;
-        return centerOffset - targetPosition;
+        return centerOffset - targetPosition + wobble;
     }, [viewportWidth]);
 
     useEffect(() => {
         if (reel.length === 0 || viewportWidth === 0) return;
-        
-        clearTimeout(snapTimerRef.current);
+        if (snapTimerRef.current) clearTimeout(snapTimerRef.current);
 
         if (gameState === 'spinning' && winningNumber !== null) {
-            const targetCycle = 45; // Pick a cycle deep into the reel for a long spin.
+            const targetCycle = 45; // Pick a cycle deep into the reel for a long spin
             const targetIndexInOrder = ROULETTE_ORDER.indexOf(winningNumber);
-            
-            if (targetIndexInOrder === -1) {
-                console.error("Winning number not found in ROULETTE_ORDER:", winningNumber);
-                return;
-            };
+            if (targetIndexInOrder === -1) return;
 
             const targetIndex = (targetCycle * ROULETTE_ORDER.length) + targetIndexInOrder;
             
-            // Wobble for visual randomness during spin.
+            // Wobble for visual randomness during spin, which will be corrected on snap
             const wobble = (Math.random() - 0.5) * (TILE_WIDTH * 0.4);
-            const finalTranslate = getTranslateForIndex(targetIndex) + wobble;
+            const finalTranslate = getTranslateForIndex(targetIndex, wobble);
             
-            // Start the animation.
             setIsAnimating(true);
             setTranslateX(finalTranslate);
 
-            // This timer is a robust replacement for onTransitionEnd.
-            // It ensures the reel snaps to the perfect final position after the animation.
+            // RELIABLE SNAP: A setTimeout is more robust than onTransitionEnd events.
+            // After the animation duration, we force the reel to the perfect position.
             snapTimerRef.current = window.setTimeout(() => {
-                 const perfectTranslate = getTranslateForIndex(targetIndex);
-                 setIsAnimating(false); // Disable CSS transition for the final snap.
+                 const perfectTranslate = getTranslateForIndex(targetIndex, 0);
+                 setIsAnimating(false); // Disable animation for the final snap
                  setTranslateX(perfectTranslate);
             }, 5000); // Animation is 4.5s, 5s gives a safe buffer.
 
-        } else if (gameState === 'betting' || gameState === 'ended') {
-            // In 'betting' or 'ended' state, snap to the most recent winning number's position.
-            const numberToShow = gameState === 'betting' ? previousWinningNumber : winningNumber;
-            if (numberToShow === null) return;
-
-            const restingCycle = 5; // An early cycle for the resting position.
-            const winnerIdx = ROULETTE_ORDER.indexOf(numberToShow);
-            const restingIndex = (restingCycle * ROULETTE_ORDER.length) + (winnerIdx > -1 ? winnerIdx : 0);
+        } else if (gameState === 'ended' && winningNumber !== null) {
+             // When the round has ended, ensure we are snapped perfectly to the winner.
+             // This handles cases where the component might re-render.
+            const targetCycle = 45; // Use the same cycle as the spin to prevent visual jumps
+            const winnerIdx = ROULETTE_ORDER.indexOf(winningNumber);
+            if (winnerIdx === -1) return;
+            const restingIndex = (targetCycle * ROULETTE_ORDER.length) + winnerIdx;
             
             setIsAnimating(false);
-            setTranslateX(getTranslateForIndex(restingIndex));
+            setTranslateX(getTranslateForIndex(restingIndex, 0));
+
+        } else if (gameState === 'betting') {
+            // Before a new spin, rest on the previous winner.
+            const restingCycle = 5; // Use a closer cycle for efficiency.
+            const prevWinnerIdx = ROULETTE_ORDER.indexOf(previousWinningNumber);
+            if (prevWinnerIdx === -1) return;
+            const restingIndex = (restingCycle * ROULETTE_ORDER.length) + prevWinnerIdx;
+            
+            setIsAnimating(false);
+            setTranslateX(getTranslateForIndex(restingIndex, 0));
         }
 
     }, [gameState, winningNumber, previousWinningNumber, reel, viewportWidth, getTranslateForIndex]);
