@@ -6,16 +6,16 @@ import { Session } from '@supabase/supabase-js';
 interface ChatRailProps {
   session: Session | null;
   onClose?: () => void;
-  onUserClick: (user: { id: string; username: string }) => void;
 }
 
-export const ChatRail: React.FC<ChatRailProps> = ({ session, onClose, onUserClick }) => {
+export const ChatRail: React.FC<ChatRailProps> = ({ session, onClose }) => {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [input, setInput] = useState('');
   const scrollContainerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const fetchMessages = async () => {
+        // Fetch from the new, efficient view
         const { data, error } = await supabase
             .from('chat_messages_with_profiles')
             .select('*')
@@ -25,9 +25,9 @@ export const ChatRail: React.FC<ChatRailProps> = ({ session, onClose, onUserClic
         if (error) {
             console.error('Error fetching chat messages:', error);
         } else {
+            // Map the flat view data to the nested ChatMessage type
             const formattedMessages = data.map(msg => ({
                 id: msg.id,
-                user_id: msg.user_id,
                 message: msg.message,
                 created_at: msg.created_at,
                 profiles: {
@@ -40,14 +40,15 @@ export const ChatRail: React.FC<ChatRailProps> = ({ session, onClose, onUserClic
     };
     fetchMessages();
 
+    // Subscribe to the new view directly for maximum performance
     const channel = supabase
         .channel('chat-room-v2')
         .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'chat_messages_with_profiles' }, 
         (payload) => {
+             // The payload from the view already contains profile data. No extra fetch needed!
              const newMessage = payload.new;
              const formattedMessage: ChatMessage = {
                 id: newMessage.id,
-                user_id: newMessage.user_id,
                 message: newMessage.message,
                 created_at: newMessage.created_at,
                 profiles: {
@@ -76,18 +77,21 @@ export const ChatRail: React.FC<ChatRailProps> = ({ session, onClose, onUserClic
         const messageToSend = input.trim();
         setInput('');
 
+        // Inserts still happen to the original table
         const { error } = await supabase
             .from('chat_messages')
             .insert({ message: messageToSend, user_id: session.user.id });
 
         if (error) {
             console.error('Error sending message:', error);
+            // Re-set input if sending failed
             setInput(messageToSend);
         }
     }
   };
 
   const getUserColor = (username: string) => {
+    // Simple hash function to get a color based on username
     let hash = 0;
     for (let i = 0; i < username.length; i++) {
         hash = username.charCodeAt(i) + ((hash << 5) - hash);
@@ -116,20 +120,9 @@ export const ChatRail: React.FC<ChatRailProps> = ({ session, onClose, onUserClic
       <div ref={scrollContainerRef} className="flex-1 overflow-y-auto p-4 space-y-4">
         {messages.map((msg) => (
           <div key={msg.id} className="flex items-start space-x-3 animate-fade-in-up">
-            <button
-              onClick={() => onUserClick({ id: msg.user_id, username: msg.profiles.username })}
-              aria-label={`Tip user ${msg.profiles.username}`}
-            >
-              <img src={msg.profiles.avatar_url} alt={`${msg.profiles.username}'s avatar`} className="w-8 h-8 rounded-full flex-shrink-0" />
-            </button>
+            <img src={msg.profiles.avatar_url} alt={`${msg.profiles.username}'s avatar`} className="w-8 h-8 rounded-full flex-shrink-0" />
             <div className="flex-1">
-              <button 
-                onClick={() => onUserClick({ id: msg.user_id, username: msg.profiles.username })}
-                aria-label={`Tip user ${msg.profiles.username}`}
-                className={`font-semibold text-sm text-left ${getUserColor(msg.profiles.username)} hover:underline`}
-              >
-                {msg.profiles.username}
-              </button>
+              <span className={`font-semibold text-sm ${getUserColor(msg.profiles.username)}`}>{msg.profiles.username}</span>
               <p className="text-sm text-text-muted break-words">{msg.message}</p>
             </div>
           </div>

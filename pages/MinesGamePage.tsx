@@ -6,7 +6,6 @@ import { Session } from '@supabase/supabase-js';
 import { MinesControls } from '../components/mines/MinesControls';
 import { MinesGrid } from '../components/mines/MinesGrid';
 import { MinesSoundIcon, MinesSpeedIcon, MinesHistoryIcon, MinesTimerIcon, MinesHelpIcon } from '../components/mines/MinesIcons';
-import { supabase } from '../lib/supabaseClient';
 
 // --- Provably Fair Helper Functions ---
 
@@ -83,10 +82,11 @@ interface MinesGamePageProps {
     profile: Profile | null;
     session: Session | null;
     onProfileUpdate: () => void;
+    onBalanceChange: (amount: number) => void;
 }
 
 
-const MinesGamePage: React.FC<MinesGamePageProps> = ({ profile, session, onProfileUpdate }) => {
+const MinesGamePage: React.FC<MinesGamePageProps> = ({ profile, session, onProfileUpdate, onBalanceChange }) => {
     const [gameState, setGameState] = useState<'idle' | 'playing' | 'busted' | 'cashed_out'>('idle');
     const [betAmount, setBetAmount] = useState(0.01);
     const [numMines, setNumMines] = useState(3);
@@ -94,7 +94,6 @@ const MinesGamePage: React.FC<MinesGamePageProps> = ({ profile, session, onProfi
     const [mineLocations, setMineLocations] = useState<Set<number>>(new Set());
     const [revealedTiles, setRevealedTiles] = useState<Set<number>>(new Set());
     const [gemsFound, setGemsFound] = useState(0);
-    const [error, setError] = useState<string | null>(null);
 
     const currentMultiplier = useMemo(() => calculateMultiplier(gemsFound, numMines), [gemsFound, numMines]);
     const profit = useMemo(() => betAmount * currentMultiplier, [betAmount, currentMultiplier]);
@@ -113,25 +112,21 @@ const MinesGamePage: React.FC<MinesGamePageProps> = ({ profile, session, onProfi
 
     const handleStartGame = useCallback(async () => {
         if (gameState !== 'idle') return;
+
         if (!profile || betAmount > profile.balance) {
-            setError("Insufficient funds.");
+            console.error("Insufficient funds or not logged in.");
             return;
         }
         
-        const { data, error: rpcError } = await supabase.rpc('place_mines_bet', { bet_amount_in: betAmount });
+        onBalanceChange(-betAmount);
 
-        if (rpcError || (data && !data.success)) {
-            setError(data?.message || rpcError?.message || "Failed to place bet.");
-            return;
-        }
-
-        onProfileUpdate();
         resetGame(true);
         
         // --- Provably Fair Mine Placement ---
+        // In a real app, seeds would be managed and user-configurable.
         const serverSeed = Math.random().toString(36).substring(2);
         const clientSeed = 'fixed-client-seed-for-demo';
-        const nonce = 1;
+        const nonce = 1; // Should increment per bet with same seed pair
 
         const hashSeed = `${serverSeed}:${clientSeed}:${nonce}`;
         const hashHex = await sha256Hex(hashSeed);
@@ -141,10 +136,11 @@ const MinesGamePage: React.FC<MinesGamePageProps> = ({ profile, session, onProfi
         const cells = Array.from({ length: 25 }, (_, i) => i);
         const shuffledCells = seededShuffle(cells, rng);
         const newMineLocations = new Set<number>(shuffledCells.slice(0, numMines));
-        
+        // --- End of Provably Fair Logic ---
+
         setMineLocations(newMineLocations);
         setGameState('playing');
-    }, [numMines, gameState, resetGame, betAmount, profile, onProfileUpdate]);
+    }, [numMines, gameState, resetGame, betAmount, profile, onBalanceChange]);
     
     const showFinalGrid = useCallback((hitMineIndex?: number) => {
          const finalGrid = Array(25).fill('hidden').map((_, i) => {
@@ -154,7 +150,7 @@ const MinesGamePage: React.FC<MinesGamePageProps> = ({ profile, session, onProfi
             if (revealedTiles.has(i)) {
                 return 'gem';
             }
-            return 'hidden';
+            return 'hidden'; // Keep un-revealed non-mines hidden or show them as greyed-out gems
         });
 
         if(typeof hitMineIndex === 'number') {
@@ -184,20 +180,14 @@ const MinesGamePage: React.FC<MinesGamePageProps> = ({ profile, session, onProfi
 
     }, [gameState, mineLocations, gridState, revealedTiles, showFinalGrid]);
 
-    const handleCashout = useCallback(async () => {
+    const handleCashout = useCallback(() => {
         if (gameState !== 'playing' || gemsFound === 0) return;
 
-        const { error: rpcError } = await supabase.rpc('cashout_mines_game', { profit_in: profit });
-
-        if (rpcError) {
-             setError(rpcError.message || "Cashout failed.");
-             return;
-        }
-
-        onProfileUpdate();
+        onBalanceChange(profit);
+        
         setGameState('cashed_out');
         showFinalGrid();
-    }, [gameState, gemsFound, profit, showFinalGrid, onProfileUpdate]);
+    }, [gameState, gemsFound, profit, showFinalGrid, onBalanceChange]);
     
     return (
         <div className="flex-1 flex flex-col bg-cover bg-center" style={{ backgroundImage: "url('https://gamdom.com/_proxied/games/mines/background-large.c5ce2650525728772697.webp')" }}>

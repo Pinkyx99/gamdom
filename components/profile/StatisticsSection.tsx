@@ -1,17 +1,12 @@
 import React from 'react';
 import { SectionShell } from './shared/SectionShell';
 import { ChartBarIcon, DiceIcon, CrashIcon, RouletteIcon, PlinkoIcon, MinesIcon } from '../icons';
-import { Profile } from '../../types';
 
-interface StatisticsSectionProps {
-    profile: Profile | null;
-}
-
-export const StatisticsSection: React.FC<StatisticsSectionProps> = ({ profile }) => {
+export const StatisticsSection: React.FC = () => {
     
     const statsCards = [
         { label: 'Games Played', value: '106', icon: <DiceIcon className="w-6 h-6 text-blue-400" /> },
-        { label: 'Wagered', value: `$${(profile?.wagered ?? 0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`, icon: <span className="text-xl font-bold text-accent-green">$</span> },
+        { label: 'Wagered', value: '$1m', icon: <span className="text-xl font-bold text-accent-green">$</span> },
         { label: 'Wagered Today', value: '$0.17', icon: <span className="text-xl font-bold text-accent-green">$</span> },
         { label: 'Net Profit', value: '-$11.54', icon: <span className="text-xl font-bold text-red-500">$</span> },
     ];

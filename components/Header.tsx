@@ -1,7 +1,6 @@
 
 
 
-
 import React, { useState } from 'react';
 import { NAV_ITEMS, TOP_NAV_LINKS } from '../constants';
 import { LogoIcon } from './icons';
@@ -13,7 +12,7 @@ import { ProfileDropdown } from './ProfileDropdown';
 import { supabase } from '../lib/supabaseClient';
 
 // FIX: Add 'roulette-info' to View type to match App.tsx and fix navigation type errors.
-type View = 'home' | 'crash' | 'mines' | 'roulette' | 'roulette-info' | 'rewards' | ProfileLink['name'];
+type View = 'home' | 'crash' | 'mines' | 'roulette' | 'roulette-info' | ProfileLink['name'];
 
 interface HeaderProps {
   session: Session | null;
@@ -32,15 +31,11 @@ export const Header: React.FC<HeaderProps> = ({ session, profile, onWalletButton
   const [activeMenu, setActiveMenu] = useState<string | null>(null);
 
   const isGamePage = ['crash', 'mines', 'roulette'].includes(currentView);
-  const isProfilePage = !['home', 'crash', 'mines', 'roulette', 'roulette-info', 'rewards'].includes(currentView);
+  const isProfilePage = !['home', 'crash', 'mines', 'roulette', 'roulette-info'].includes(currentView);
 
 
   const handleNavClick = (clickedItem: NavItem) => {
-    if (clickedItem.name === 'Originals') {
-        onNavigate('home');
-    } else if (clickedItem.name === 'Rewards') {
-        onNavigate('rewards');
-    }
+    if (clickedItem.name === 'Originals') onNavigate('home');
     // Add navigation for other main tabs if needed
     setNavItems(navItems.map(item => ({ ...item, active: item.name === clickedItem.name })));
   };
@@ -77,7 +72,7 @@ export const Header: React.FC<HeaderProps> = ({ session, profile, onWalletButton
                 </a>
                 <nav className="hidden md:flex space-x-1">
                   {navItems.map((item) => {
-                    const isActive = (item.name === 'Originals' && (isGamePage || currentView === 'home')) || (item.name === 'Rewards' && currentView === 'rewards') || (item.active && !isProfilePage && !isGamePage && currentView !== 'rewards');
+                    const isActive = (item.name === 'Originals' && isGamePage) || (item.active && !isProfilePage && !isGamePage);
                     return (
                         <div
                         key={item.name}

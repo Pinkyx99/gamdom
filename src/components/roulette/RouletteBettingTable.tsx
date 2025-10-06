@@ -1,4 +1,3 @@
-
 import React, { useMemo } from 'react';
 import { Profile, RouletteBet, RouletteColor } from '../../types';
 
@@ -21,13 +20,25 @@ const UserIcon: React.FC<{ className?: string }> = ({ className }) => (
 
 export const RouletteBettingArea: React.FC<RouletteBettingAreaProps> = ({ color, title, payout, bets, onPlaceBet, disabled, isWinner, isEnded, profile }) => {
     
-    const totalBet = useMemo(() => bets.reduce((sum, bet) => sum + bet.bet_amount, 0), [bets]);
+    const { totalBet, myBetAmount } = useMemo(() => {
+        let total = 0;
+        let myBet = 0;
+        bets.forEach(bet => {
+            total += bet.bet_amount;
+            if (bet.user_id === profile?.id) {
+                myBet = bet.bet_amount;
+            }
+        });
+        return { totalBet: total, myBetAmount: myBet };
+    }, [bets, profile?.id]);
 
     const buttonColorClasses = {
         red: 'bg-[#F44336] hover:bg-red-500',
         green: 'bg-[#00C17B] hover:bg-green-500',
         black: 'bg-[#2A3341] hover:bg-gray-700',
     };
+    
+    const profit = myBetAmount * (color === 'green' ? 13 : 1);
 
     return (
         <div className={`bg-[#1A222D] rounded-xl border-2 ${isEnded && isWinner ? 'border-accent-green animate-pulse-slow' : 'border-outline'} flex flex-col min-h-[250px] p-3 space-y-3 transition-colors`}>
@@ -57,9 +68,9 @@ export const RouletteBettingArea: React.FC<RouletteBettingAreaProps> = ({ color,
                             <span className="text-xs text-text-muted truncate max-w-[120px]">{bet.user_id === profile?.id ? 'Your Bet' : bet.profiles.username}</span>
                         </div>
                         <div className="flex items-center space-x-3">
-                            {isEnded && isWinner && bet.user_id === profile?.id && bet.profit !== null && bet.profit > 0 && (
+                            {isEnded && isWinner && bet.user_id === profile?.id && (
                                 <span className="text-sm font-semibold text-accent-green animate-pulse">
-                                    +${bet.profit.toFixed(2)}
+                                    +${(bet.bet_amount * (color === 'green' ? 14 : 2) - bet.bet_amount).toFixed(2)}
                                 </span>
                             )}
                             <span className="text-sm font-semibold w-16 text-right">${bet.bet_amount.toFixed(2)}</span>

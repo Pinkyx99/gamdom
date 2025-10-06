@@ -183,7 +183,7 @@ export const BadgeCheckIcon: React.FC<{ className?: string }> = ({ className }) 
     <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z" /></svg>
 );
 export const CogIcon: React.FC<{ className?: string }> = ({ className }) => (
-    <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066 2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
+    <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
 );
 export const SwitchHorizontalIcon: React.FC<{ className?: string }> = ({ className }) => (
     <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" /></svg>
@@ -226,31 +226,5 @@ export const RouletteUserIcon: React.FC<{ className?: string }> = ({ className }
     <svg className={className} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
         <rect width="24" height="24" rx="6" fill="#00C17B"/>
         <path d="M12 12C13.6569 12 15 10.6569 15 9C15 7.34315 13.6569 6 12 6C10.3431 6 9 7.34315 9 9C9 10.6569 10.3431 12 12 12ZM12 14C9.33333 14 7 15.3333 7 18H17C17 15.3333 14.6667 14 12 14Z" fill="white"/>
-    </svg>
-);
-
-// Rewards Page Icons
-export const LockIcon: React.FC<{ className?: string }> = ({ className }) => (
-    <svg className={className} viewBox="0 0 20 20" fill="currentColor">
-        <path fillRule="evenodd" d="M10 2a3 3 0 00-3 3v1H6a2 2 0 00-2 2v8a2 2 0 002 2h8a2 2 0 002-2V8a2 2 0 00-2-2h-1V5a3 3 0 00-3-3zm-1 5v1h2V7a1 1 0 00-2 0z" clipRule="evenodd" />
-    </svg>
-);
-
-export const RankIcon: React.FC<{ tier: string, className?: string }> = ({ tier, className }) => (
-    <svg className={className} viewBox="0 0 80 92" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <defs>
-            <linearGradient id="grad-Bronze" x1="40" y1="0" x2="40" y2="92" gradientUnits="userSpaceOnUse"><stop stopColor="#D9A477"/><stop offset="1" stopColor="#A66A41"/></linearGradient>
-            <linearGradient id="grad-Silver" x1="40" y1="0" x2="40" y2="92" gradientUnits="userSpaceOnUse"><stop stopColor="#E6E8EB"/><stop offset="1" stopColor="#A5AEB8"/></linearGradient>
-            <linearGradient id="grad-Gold" x1="40" y1="0" x2="40" y2="92" gradientUnits="userSpaceOnUse"><stop stopColor="#FFD700"/><stop offset="1" stopColor="#E6A60D"/></linearGradient>
-            <linearGradient id="grad-Emerald" x1="40" y1="0" x2="40" y2="92" gradientUnits="userSpaceOnUse"><stop stopColor="#50C878"/><stop offset="1" stopColor="#00A86B"/></linearGradient>
-            <linearGradient id="grad-Sapphire" x1="40" y1="0" x2="40" y2="92" gradientUnits="userSpaceOnUse"><stop stopColor="#0F52BA"/><stop offset="1" stopColor="#00318C"/></linearGradient>
-            <linearGradient id="grad-Ruby" x1="40" y1="0" x2="40" y2="92" gradientUnits="userSpaceOnUse"><stop stopColor="#E0115F"/><stop offset="1" stopColor="#B30E4C"/></linearGradient>
-            <linearGradient id="grad-Diamond" x1="40" y1="0" x2="40" y2="92" gradientUnits="userSpaceOnUse"><stop stopColor="#B9F2FF"/><stop offset="1" stopColor="#6CD6F4"/></linearGradient>
-            <linearGradient id="grad-Opal" x1="40" y1="0" x2="40" y2="92" gradientUnits="userSpaceOnUse"><stop stopColor="#FF69B4"/><stop offset="0.3" stopColor="#8A2BE2"/><stop offset="0.7" stopColor="#00FFFF"/><stop offset="1" stopColor="#ADFF2F"/></linearGradient>
-        </defs>
-        <path d="M40 0L80 23V69L40 92L0 69V23L40 0Z" fill={`url(#grad-${tier})`}/>
-        <path d="M40 4L77 25V67L40 88L3 67V25L40 4Z" stroke="white" strokeOpacity="0.3" strokeWidth="1"/>
-        <path d="M40 92L80 69L60 57.5L40 69L20 57.5L0 69L40 92Z" fill="black" fillOpacity="0.1"/>
-        <path d="M40 0L0 23L20 34.5L40 23L60 34.5L80 23L40 0Z" fill="white" fillOpacity="0.3"/>
     </svg>
 );
