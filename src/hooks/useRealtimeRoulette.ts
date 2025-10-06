@@ -162,4 +162,24 @@ export const useRealtimeRoulette = (session: Session | null, onProfileUpdate: ()
 
         const { data: rpcData, error: rpcError } = await supabase.rpc('place_roulette_bet', {
             round_id_in: round.id,
-            bet_
+            bet_amount_in: betAmount,
+            bet_color_in: betColor
+        });
+        
+        onProfileUpdate();
+        
+        if (rpcError) {
+            console.error('Place bet RPC error', rpcError);
+            setError(rpcError.message || 'Bet failed');
+            return;
+        }
+        
+        if (rpcData.success === false) {
+            setError(rpcData.message);
+            return;
+        }
+        
+    }, [session, round, onProfileUpdate]);
+
+    return { gameState, countdown, winningNumber, allBets, history, placeBet, error, isLoading };
+};

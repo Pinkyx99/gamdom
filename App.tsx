@@ -1,5 +1,7 @@
 
 
+
+
 import React, { useState, useEffect, useCallback } from 'react';
 import { Header } from './components/Header';
 import { HeroCarousel } from './components/HeroCarousel';
@@ -9,6 +11,7 @@ import { GameGrid } from './components/GameGrid';
 import { ChatRail } from './components/ChatRail';
 import { WalletModal } from './components/WalletModal';
 import { AuthModal } from './components/AuthModal';
+import { TipUserModal } from './components/TipUserModal';
 import { Game, Profile, ProfileLink } from './types';
 import { GAMES } from './constants';
 import { supabase } from './lib/supabaseClient';
@@ -18,8 +21,9 @@ import CrashGamePage from './pages/CrashGamePage';
 import MinesGamePage from './pages/MinesGamePage';
 import RouletteGamePage from './pages/RouletteGamePage';
 import RouletteInfoPage from './pages/RouletteInfoPage';
+import RewardsPage from './pages/RewardsPage';
 
-type View = 'home' | 'crash' | 'mines' | 'roulette' | 'roulette-info' | ProfileLink['name'];
+type View = 'home' | 'crash' | 'mines' | 'roulette' | 'roulette-info' | 'rewards' | ProfileLink['name'];
 
 const App: React.FC = () => {
   const [session, setSession] = useState<Session | null>(null);
@@ -29,13 +33,14 @@ const App: React.FC = () => {
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [authView, setAuthView] = useState<'signIn' | 'signUp'>('signIn');
   const [currentView, setCurrentView] = useState<View>('home');
+  const [tipRecipient, setTipRecipient] = useState<{ id: string; username: string } | null>(null);
 
   const getProfile = useCallback(async (session: Session) => {
     try {
       const { user } = session;
       const { data, error, status } = await supabase
         .from('profiles')
-        .select(`id, username, avatar_url, balance`)
+        .select(`id, username, avatar_url, balance, wagered`)
         .eq('id', user.id)
         .single();
 
@@ -82,10 +87,20 @@ const App: React.FC = () => {
           getProfile(session);
       }
   }, [session, getProfile]);
+  
+  const handleOpenTipModal = useCallback((user: { id: string; username: string }) => {
+    if (user.id === profile?.id) return; // Can't tip yourself
+    if (!session) {
+        openAuthModal('signIn');
+        return;
+    };
+    setTipRecipient(user);
+  }, [profile?.id, session]);
 
-  const handleBalanceChange = (amount: number) => {
-    setProfile(p => p ? ({ ...p, balance: p.balance + amount }) : null);
-  };
+  const handleCloseTipModal = useCallback(() => {
+      setTipRecipient(null);
+  }, []);
+
 
   const handleGameSelect = (gameName: string) => {
     const game = gameName.toLowerCase();
@@ -105,6 +120,7 @@ const App: React.FC = () => {
         case 'mines': return 'bg-[#0b1016]';
         case 'roulette': return 'bg-[#0D1316]';
         case 'roulette-info': return 'bg-[#0D1316]';
+        case 'rewards': return 'bg-background';
         default: return 'bg-background';
     }
   }
@@ -139,7 +155,7 @@ const App: React.FC = () => {
       case 'crash':
         return <CrashGamePage profile={profile} session={session} onProfileUpdate={handleProfileUpdate} />;
       case 'mines':
-        return <MinesGamePage profile={profile} session={session} onProfileUpdate={handleProfileUpdate} onBalanceChange={handleBalanceChange} />;
+        return <MinesGamePage profile={profile} session={session} onProfileUpdate={handleProfileUpdate} />;
       case 'roulette':
         return <RouletteGamePage 
                     onNavigate={(view) => setCurrentView(view as View)} 
@@ -149,6 +165,8 @@ const App: React.FC = () => {
                 />;
       case 'roulette-info':
         return <RouletteInfoPage onNavigate={(view) => setCurrentView(view as View)} />;
+      case 'rewards':
+        return <RewardsPage />;
       default: // Profile pages
         return (
            <main className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -173,6 +191,12 @@ const App: React.FC = () => {
         view={authView}
         setView={setAuthView}
       />
+      <TipUserModal
+        show={!!tipRecipient}
+        onClose={handleCloseTipModal}
+        recipient={tipRecipient}
+        onTipped={handleProfileUpdate}
+      />
       <div className="flex h-screen">
         {/* Main Content */}
         <div className="flex-1 min-w-0 flex flex-col">
@@ -195,7 +219,7 @@ const App: React.FC = () => {
         {/* Desktop Chat Rail */}
         <div className="hidden xl:block w-[320px] flex-shrink-0">
           <div className="sticky top-0 h-screen">
-            <ChatRail session={session} />
+            <ChatRail session={session} onUserClick={handleOpenTipModal} />
           </div>
         </div>
         
@@ -207,7 +231,7 @@ const App: React.FC = () => {
         >
           <div className="absolute inset-0 bg-black/50" onClick={() => setIsChatOpen(false)}></div>
           <div className="relative w-[320px] h-full float-right">
-             <ChatRail session={session} onClose={() => setIsChatOpen(false)} />
+             <ChatRail session={session} onClose={() => setIsChatOpen(false)} onUserClick={handleOpenTipModal} />
           </div>
         </div>
 

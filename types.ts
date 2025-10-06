@@ -42,6 +42,7 @@ export interface Game {
 
 export interface ChatMessage {
   id: number;
+  user_id: string;
   message: string;
   created_at: string;
   profiles: {
@@ -84,6 +85,7 @@ export interface Profile {
   avatar_url: string;
   balance: number;
   email: string;
+  wagered: number;
 }
 
 export interface ProfileLink {
@@ -162,4 +164,22 @@ export interface RouletteBet {
 
 export interface RouletteHistoryItem {
     winning_number: number;
+}
+
+// Types for Rewards Page
+export interface RewardCard {
+    title: 'Instant' | 'Weekly' | 'Monthly';
+    reward?: string;
+    timeLeft?: string;
+    claimable: boolean;
+    imageUrl: string;
+}
+
+export type RoyaltyTier = 'Bronze' | 'Silver' | 'Gold' | 'Emerald' | 'Sapphire' | 'Ruby' | 'Diamond' | 'Opal';
+
+export interface RoyaltyRank {
+    name: string;
+    tier: RoyaltyTier;
+    level: number;
+    status: 'locked' | 'unlocked' | 'claimed';
 }
