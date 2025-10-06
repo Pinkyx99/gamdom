@@ -12,7 +12,7 @@ const GROWTH_CONSTANT_K = 0.07;
 const WAITING_TIME_MS = 7000;
 const CRASHED_DELAY_MS = 4000; // Time to wait after a crash before starting a new round
 
-export const useRealtimeCrash = (session: Session | null, onProfileUpdate: () => void, onBalanceChange: (amount: number) => void) => {
+export const useRealtimeCrash = (session: Session | null, onProfileUpdate: () => void) => {
     const [currentRound, setCurrentRound] = useState<CrashRound | null>(null);
     const [allBets, setAllBets] = useState<CrashBet[]>([]);
     const [myBets, setMyBets] = useState<CrashBet[]>([]);
@@ -220,6 +220,8 @@ export const useRealtimeCrash = (session: Session | null, onProfileUpdate: () =>
             bet_amount_in: bet_amount,
             auto_cashout_at_in: auto_cashout_at
         });
+        
+        onProfileUpdate();
 
         if (error) {
             console.error(error);
@@ -229,8 +231,6 @@ export const useRealtimeCrash = (session: Session | null, onProfileUpdate: () =>
              return { success: false, message: data.message };
         }
         
-        onBalanceChange(-bet_amount);
-        onProfileUpdate();
         return { success: true };
     };
     
@@ -247,6 +247,8 @@ export const useRealtimeCrash = (session: Session | null, onProfileUpdate: () =>
             cashout_multiplier_in: cashoutMultiplier
         });
         
+        onProfileUpdate();
+        
         if (error) {
             console.error(error);
             return { success: false, message: error.message };
@@ -255,9 +257,6 @@ export const useRealtimeCrash = (session: Session | null, onProfileUpdate: () =>
              return { success: false, message: data.message };
         }
         
-        const winnings = bet.bet_amount * cashoutMultiplier;
-        onBalanceChange(winnings);
-        onProfileUpdate();
         return { success: true };
     };
 

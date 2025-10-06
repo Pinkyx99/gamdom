@@ -19,18 +19,18 @@ export const LogoIcon: React.FC<{ className?: string }> = ({ className }) => (
 
 
 export const TrophyIcon: React.FC<{ className?: string }> = ({ className }) => (
-    <svg className={className} viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <path d="M75 15H25C22.2386 15 20 17.2386 20 20V40C20 56.5685 33.4315 70 50 70C66.5685 70 80 56.5685 80 40V20C80 17.2386 77.7614 15 75 15Z" fill="url(#trophy-gold)"/>
-        <path d="M50 70V85" stroke="#FFAA5B" strokeWidth="6" strokeLinecap="round"/>
-        <path d="M35 90H65" stroke="#FFAA5B" strokeWidth="6" strokeLinecap="round"/>
-        <path d="M20 35H15C12.2386 35 10 32.7614 10 30V25" stroke="#FFAA5B" strokeWidth="6" strokeLinecap="round"/>
-        <path d="M80 35H85C87.7614 35 90 32.7614 90 30V25" stroke="#FFAA5B" strokeWidth="6" strokeLinecap="round"/>
-        <defs>
-            <linearGradient id="trophy-gold" x1="50" y1="15" x2="50" y2="70" gradientUnits="userSpaceOnUse">
-            <stop stopColor="#FFD700"/>
-            <stop offset="1" stopColor="#FFAA5B"/>
-            </linearGradient>
-        </defs>
+    <svg className={className} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M18 3H6C4.89543 3 4 3.89543 4 5V11C4 15.4183 7.58172 19 12 19C16.4183 19 20 15.4183 20 11V5C20 3.89543 19.1046 3 18 3Z" fill="url(#trophy-gradient)" />
+      <path d="M12 19V21" stroke="#FFAA5B" strokeWidth="1.5" strokeLinecap="round" />
+      <path d="M9 22H15" stroke="#FFAA5B" strokeWidth="1.5" strokeLinecap="round" />
+      <path d="M4 9H2C1.44772 9 1 8.55228 1 8V7" stroke="#FFAA5B" strokeWidth="1.5" strokeLinecap="round" />
+      <path d="M20 9H22C22.5523 9 23 8.55228 23 8V7" stroke="#FFAA5B" strokeWidth="1.5" strokeLinecap="round" />
+      <defs>
+        <linearGradient id="trophy-gradient" x1="12" y1="3" x2="12" y2="19" gradientUnits="userSpaceOnUse">
+          <stop stopColor="#FFD700" />
+          <stop offset="1" stopColor="#FFAA5B" />
+        </linearGradient>
+      </defs>
     </svg>
 );
 
@@ -196,4 +196,35 @@ export const LogoutIcon: React.FC<{ className?: string }> = ({ className }) => (
 );
 export const UploadIcon: React.FC<{ className?: string }> = ({ className }) => (
     <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" /></svg>
+);
+
+// Roulette Page Icons
+export const MutedSoundIcon: React.FC<{ className?: string }> = ({ className }) => (
+    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+        <line x1="23" y1="9" x2="17" y2="15"></line>
+        <line x1="17" y1="9" x2="23" y2="15"></line>
+    </svg>
+);
+
+export const InfoCircleIcon: React.FC<{ className?: string }> = ({ className }) => (
+    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <circle cx="12" cy="12" r="10"></circle>
+        <line x1="12" y1="16" x2="12" y2="12"></line>
+        <line x1="12" y1="8" x2="12.01" y2="8"></line>
+    </svg>
+);
+
+export const CheckCircleIcon: React.FC<{ className?: string }> = ({ className }) => (
+    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+        <polyline points="22 4 12 14.01 9 11.01"></polyline>
+    </svg>
+);
+
+export const RouletteUserIcon: React.FC<{ className?: string }> = ({ className }) => (
+    <svg className={className} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <rect width="24" height="24" rx="6" fill="#00C17B"/>
+        <path d="M12 12C13.6569 12 15 10.6569 15 9C15 7.34315 13.6569 6 12 6C10.3431 6 9 7.34315 9 9C9 10.6569 10.3431 12 12 12ZM12 14C9.33333 14 7 15.3333 7 18H17C17 15.3333 14.6667 14 12 14Z" fill="white"/>
+    </svg>
 );

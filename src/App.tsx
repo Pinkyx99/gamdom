@@ -1,5 +1,7 @@
 
 
+
+
 import React, { useState, useEffect, useCallback } from 'react';
 import { Header } from './components/Header';
 import { HeroCarousel } from './components/HeroCarousel';
@@ -137,7 +139,7 @@ const App: React.FC = () => {
           </main>
         );
       case 'crash':
-        return <CrashGamePage profile={profile} session={session} onProfileUpdate={handleProfileUpdate} />;
+        return <CrashGamePage profile={profile} session={session} onProfileUpdate={handleProfileUpdate} onBalanceChange={handleBalanceChange} />;
       case 'mines':
         return <MinesGamePage profile={profile} session={session} onProfileUpdate={handleProfileUpdate} onBalanceChange={handleBalanceChange} />;
       case 'roulette':

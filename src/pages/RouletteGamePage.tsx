@@ -19,7 +19,7 @@ interface RouletteGamePageProps {
 
 const HistoryBar: React.FC<{ history: RouletteHistoryItem[] }> = ({ history }) => (
     <div className="flex items-center space-x-1.5 overflow-hidden">
-        {history.slice(0, 15).map((item, index) => (
+        {history.slice(0, 8).map((item, index) => (
             <div key={index} className={`w-8 h-8 rounded-full flex-shrink-0 flex items-center justify-center text-xs font-bold text-white ${getNumberColorClass(item.winning_number)} border-2 border-background`}>
                 {item.winning_number}
             </div>

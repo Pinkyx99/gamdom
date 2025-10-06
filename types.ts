@@ -136,7 +136,7 @@ export interface CashoutEvent {
 
 // Types for Roulette Game
 export type RouletteColor = 'red' | 'green' | 'black';
-export type RouletteGameState = 'waiting' | 'spinning' | 'finished';
+export type RouletteGameState = 'betting' | 'spinning' | 'ended';
 
 export interface RouletteRound {
     id: string;

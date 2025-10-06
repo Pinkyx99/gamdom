@@ -1,5 +1,6 @@
 
 
+
 import React, { useState } from 'react';
 import { NAV_ITEMS, TOP_NAV_LINKS } from '../constants';
 import { LogoIcon } from './icons';
@@ -10,7 +11,8 @@ import { Session } from '@supabase/supabase-js';
 import { ProfileDropdown } from './ProfileDropdown';
 import { supabase } from '../lib/supabaseClient';
 
-type View = 'home' | 'crash' | 'mines' | 'roulette' | ProfileLink['name'];
+// FIX: Add 'roulette-info' to View type to match App.tsx and fix navigation type errors.
+type View = 'home' | 'crash' | 'mines' | 'roulette' | 'roulette-info' | ProfileLink['name'];
 
 interface HeaderProps {
   session: Session | null;
@@ -29,7 +31,7 @@ export const Header: React.FC<HeaderProps> = ({ session, profile, onWalletButton
   const [activeMenu, setActiveMenu] = useState<string | null>(null);
 
   const isGamePage = ['crash', 'mines', 'roulette'].includes(currentView);
-  const isProfilePage = !['home', 'crash', 'mines', 'roulette'].includes(currentView);
+  const isProfilePage = !['home', 'crash', 'mines', 'roulette', 'roulette-info'].includes(currentView);
 
 
   const handleNavClick = (clickedItem: NavItem) => {

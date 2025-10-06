@@ -15,44 +15,48 @@ export const ChatRail: React.FC<ChatRailProps> = ({ session, onClose }) => {
 
   useEffect(() => {
     const fetchMessages = async () => {
+        // Fetch from the new, efficient view
         const { data, error } = await supabase
-            .from('chat_messages')
-            .select(`
-                id,
-                message,
-                created_at,
-                profiles (
-                    username,
-                    avatar_url
-                )
-            `)
+            .from('chat_messages_with_profiles')
+            .select('*')
             .order('created_at', { ascending: true })
             .limit(50);
         
         if (error) {
             console.error('Error fetching chat messages:', error);
         } else {
-            setMessages(data as any[] as ChatMessage[]);
+            // Map the flat view data to the nested ChatMessage type
+            const formattedMessages = data.map(msg => ({
+                id: msg.id,
+                message: msg.message,
+                created_at: msg.created_at,
+                profiles: {
+                    username: msg.username,
+                    avatar_url: msg.avatar_url,
+                }
+            }));
+            setMessages(formattedMessages);
         }
     };
     fetchMessages();
 
+    // Subscribe to the new view directly for maximum performance
     const channel = supabase
-        .channel('chat-room')
-        .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'chat_messages' }, 
+        .channel('chat-room-v2')
+        .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'chat_messages_with_profiles' }, 
         (payload) => {
-             // We need to fetch the profile data for the new message
-             const fetchNewMessage = async () => {
-                 const { data, error } = await supabase
-                    .from('chat_messages')
-                    .select(`*, profiles(username, avatar_url)`)
-                    .eq('id', payload.new.id)
-                    .single();
-                 if (!error && data) {
-                     setMessages(prev => [...prev, data as any as ChatMessage]);
-                 }
-             }
-             fetchNewMessage();
+             // The payload from the view already contains profile data. No extra fetch needed!
+             const newMessage = payload.new;
+             const formattedMessage: ChatMessage = {
+                id: newMessage.id,
+                message: newMessage.message,
+                created_at: newMessage.created_at,
+                profiles: {
+                    username: newMessage.username,
+                    avatar_url: newMessage.avatar_url,
+                }
+             };
+             setMessages(prev => [...prev, formattedMessage]);
         })
         .subscribe();
 
@@ -73,6 +77,7 @@ export const ChatRail: React.FC<ChatRailProps> = ({ session, onClose }) => {
         const messageToSend = input.trim();
         setInput('');
 
+        // Inserts still happen to the original table
         const { error } = await supabase
             .from('chat_messages')
             .insert({ message: messageToSend, user_id: session.user.id });

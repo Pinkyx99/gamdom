@@ -70,6 +70,11 @@ export const useRealtimeRoulette = (session: Session | null, onProfileUpdate: ()
                 if (newRound.status === 'ended' && newRound.winning_number !== null && prevRound?.status !== 'ended') {
                      setHistory(h => [{ winning_number: newRound.winning_number! }, ...h].slice(0, 50));
                      onProfileUpdate(); // Re-fetch profile to get updated balance after payouts
+                     // Re-fetch all bets for the completed round to get final profit numbers
+                     supabase.from('roulette_bets').select(`*, profiles(username, avatar_url)`).eq('round_id', newRound.id)
+                        .then(({ data }) => {
+                            if (data) setAllBets(data as any);
+                        });
                 }
                 return newRound;
              });
@@ -87,7 +92,7 @@ export const useRealtimeRoulette = (session: Session | null, onProfileUpdate: ()
     
     // Bets subscription - separate channel to handle just bets for the current round
     useEffect(() => {
-        if (!round) return;
+        if (!round || round.status !== 'betting') return;
 
         const handleNewBet = async (payload: any) => {
             const newBet = payload.new as any;
@@ -95,14 +100,12 @@ export const useRealtimeRoulette = (session: Session | null, onProfileUpdate: ()
             if (error) return;
 
             setAllBets(prev => {
-                // Try to find if we're updating an existing bet
                 const existingIndex = prev.findIndex(b => b.user_id === newBet.user_id && b.bet_color === newBet.bet_color);
                 if (existingIndex > -1) {
                     const updatedBets = [...prev];
-                    updatedBets[existingIndex] = { ...prev[existingIndex], bet_amount: newBet.bet_amount };
+                    updatedBets[existingIndex] = { ...updatedBets[existingIndex], ...newBet, profiles: profileData || updatedBets[existingIndex].profiles };
                     return updatedBets;
                 }
-                // Otherwise, add a new one
                 return [...prev, { ...newBet, profiles: profileData }];
             });
         };
@@ -114,7 +117,7 @@ export const useRealtimeRoulette = (session: Session | null, onProfileUpdate: ()
             .subscribe();
 
         return () => { supabase.removeChannel(betsChannel) };
-    }, [round?.id]);
+    }, [round?.id, round?.status]);
 
 
     // Countdown timer effect
@@ -159,26 +162,4 @@ export const useRealtimeRoulette = (session: Session | null, onProfileUpdate: ()
 
         const { data: rpcData, error: rpcError } = await supabase.rpc('place_roulette_bet', {
             round_id_in: round.id,
-            bet_amount_in: betAmount,
-            bet_color_in: betColor
-        });
-        
-        // Always re-fetch profile to sync state after any RPC call.
-        // This ensures the client balance is always the source of truth from the DB.
-        onProfileUpdate();
-        
-        if (rpcError) {
-            console.error('Place bet RPC error', rpcError);
-            setError(rpcError.message || 'Bet failed');
-            return;
-        }
-        
-        if (rpcData.success === false) {
-            setError(rpcData.message);
-            return;
-        }
-        
-    }, [session, round, onProfileUpdate]);
-
-    return { gameState, countdown, winningNumber, allBets, history, placeBet, error, isLoading };
-};
+            bet_

@@ -15,12 +15,11 @@ interface CrashGamePageProps {
     profile: Profile | null;
     session: Session | null;
     onProfileUpdate: () => void;
-    onBalanceChange: (amount: number) => void;
 }
 
 export const MultiplierContext = createContext(1.00);
 
-const CrashGamePage: React.FC<CrashGamePageProps> = ({ profile, session, onProfileUpdate, onBalanceChange }) => {
+const CrashGamePage: React.FC<CrashGamePageProps> = ({ profile, session, onProfileUpdate }) => {
     const {
         gameState,
         multiplier,
@@ -30,7 +29,7 @@ const CrashGamePage: React.FC<CrashGamePageProps> = ({ profile, session, onProfi
         history,
         placeBet,
         cashout,
-    } = useRealtimeCrash(session, onProfileUpdate, onBalanceChange);
+    } = useRealtimeCrash(session, onProfileUpdate);
     
     const [cashoutEvents, setCashoutEvents] = useState<CashoutEvent[]>([]);
     const [isFairnessModalOpen, setIsFairnessModalOpen] = useState(false);
