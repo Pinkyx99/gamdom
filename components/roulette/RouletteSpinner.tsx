@@ -63,9 +63,9 @@ const GameStatusDisplay: React.FC<{ gameState: RouletteGameState | null; countdo
 };
 
 const TopArrowMarker: React.FC = () => (
-    <div className="absolute top-[-4px] left-1/2 -translate-x-1/2 z-20 flex flex-col items-center pointer-events-none">
-        <svg width="28" height="16" viewBox="0 0 28 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg" className="text-gray-600 drop-shadow-lg">
-            <path d="M14 0L28 16H0L14 0Z" />
+    <div className="absolute top-[-8px] left-1/2 -translate-x-1/2 z-20 flex flex-col items-center pointer-events-none">
+        <svg width="24" height="14" viewBox="0 0 24 14" fill="currentColor" xmlns="http://www.w3.org/2000/svg" className="text-white drop-shadow-lg">
+            <path d="M0 0 L24 0 L12 14 Z" />
         </svg>
     </div>
 );
